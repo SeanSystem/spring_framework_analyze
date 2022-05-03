@@ -297,6 +297,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			// 有AOP的情况下会调用getEarlyBeanReference方法，在getEarlyBeanReference方法中会将原本的bean放入到earlyProxyReferences中
+			// 所以remove出来的bean和参数中的bean是同一个，条件不成立，所以不会再生成一个新的代理对象
+			// 如果没有aop，就不会调用getEarlyBeanReference方法，earlyProxyReferences是空的，remove出来是null，条件成立，就会生成一个代理对象
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}

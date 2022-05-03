@@ -609,6 +609,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 属性赋值
 			populateBean(beanName, mbd, instanceWrapper);
 			// 初始化bean
+			// 有AOP情况下，存在循环依赖时，代理对象的创建在populateBean中就创建好了，并放在了二级缓存中，此处不会再去创建代理对象，返回的是原对象
+			// 有AOP情况下，不存在循环依时，代理对象创建是在AbstractAutoProxyCreator的postProcessAfterInitialization方法中创建的，返回的是代理对象
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		} catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -620,6 +622,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
+			// 从缓存中获取对象，参数false表示只会从一、二级缓存中获取bean，在处理循环依赖问题的时候已经将对象（代理对象）放入二级缓存中
+			// 这里其实是从二级缓存中获取先前暴露的对象
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
 				if (exposedObject == bean) {
