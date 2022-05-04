@@ -163,6 +163,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		this.registry = registry;
 
 		if (useDefaultFilters) {
+			// 注册默认的一些注解过滤器，包含Component注解
 			registerDefaultFilters();
 		}
 		setEnvironment(environment);
@@ -249,12 +250,15 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @return number of beans registered
 	 */
 	public int scan(String... basePackages) {
+		// 获取容器中已经注册了的BeanDefinition个数
 		int beanCountAtScanStart = this.registry.getBeanDefinitionCount();
 
+		// 扫描basePackages
 		doScan(basePackages);
 
 		// Register annotation config processors, if necessary.
 		if (this.includeAnnotationConfig) {
+			// 注册和注解相关的一些后置处理器的BeanDefinition
 			AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 		}
 
@@ -272,23 +276,35 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
+		// 遍历每个包路径
 		for (String basePackage : basePackages) {
+			// 在包路径basePackage下，加载所有符合候选条件类的BeanDefinition
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
+				// 获取beanDefinition中注解@Scope的元数据信息
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
+				// 注解@Scope默认的作用域是单例：Singleton
 				candidate.setScope(scopeMetadata.getScopeName());
+				// 生成beanName
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
+				// 是否是AbstractBeanDefinition示例
 				if (candidate instanceof AbstractBeanDefinition) {
+					// 为BeanDefinition注册下默认的属性值
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
+				// 是否是AnnotatedBeanDefinition实例，也就是注解类型BeanDefinition
 				if (candidate instanceof AnnotatedBeanDefinition) {
+					// 将其他各种注解上的信息设置到BeanDefinition中
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
+				// 判断当前的candidate和容器中已经注册的DeanDefinition是否兼容
 				if (checkCandidate(beanName, candidate)) {
+					// 将BeanDefinition和BeanName封装到BeanDefinitionHolder中
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 					beanDefinitions.add(definitionHolder);
+					// 注册DeanDefinition到Spring容器
 					registerBeanDefinition(definitionHolder, this.registry);
 				}
 			}

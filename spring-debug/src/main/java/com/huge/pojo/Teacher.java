@@ -49,8 +49,8 @@ public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAwa
 	}
 
 
-	public Teacher(School school) {
-		this.school = school;
+	public Teacher() {
+
 	}
 
 	private String name;

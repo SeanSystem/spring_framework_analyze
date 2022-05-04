@@ -10,11 +10,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Test {
 
 	public static void main(String[] args) {
-		//AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-		//applicationContext.refresh();
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+		/*ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		Object school = context.getBean("school");
 		Object teacher = context.getBean("teacher");
-		System.out.println(teacher);
+		System.out.println(teacher);*/
+
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.huge.pojo");
+		Object people = context.getBean("people");
+		System.out.println(people);
 	}
 }
