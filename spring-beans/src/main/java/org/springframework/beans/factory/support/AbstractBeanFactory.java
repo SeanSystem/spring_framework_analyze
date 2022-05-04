@@ -264,6 +264,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
+			// 当出现循环依赖，通过构造方法注入时，bean还处于实例化阶段未加入三级缓存中，此时另一个bean进行属性注入时找不到该bean
+			// 但是该bean又处于创建中，这里抛出BeanCurrentlyInCreationException异常，表明出现解决不了的循环依赖问题
+			// Requested bean is currently in creation: Is there an unresolvable circular reference?
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}

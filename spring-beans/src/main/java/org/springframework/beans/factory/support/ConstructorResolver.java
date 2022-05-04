@@ -194,6 +194,7 @@ class ConstructorResolver {
 			else {
 				ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
 				resolvedValues = new ConstructorArgumentValues();
+				// 注入构造器参数对应属性值，返回参数个数
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
@@ -688,6 +689,7 @@ class ConstructorResolver {
 				resolvedValues.addIndexedArgumentValue(index, valueHolder);
 			}
 			else {
+				// 获取构造器参数对应的值
 				Object resolvedValue =
 						valueResolver.resolveValueIfNecessary("constructor argument", valueHolder.getValue());
 				ConstructorArgumentValues.ValueHolder resolvedValueHolder =

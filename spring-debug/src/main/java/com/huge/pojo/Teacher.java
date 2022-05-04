@@ -49,8 +49,8 @@ public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAwa
 	}
 
 
-	public Teacher() {
-		System.out.println("new Teacher");
+	public Teacher(School school) {
+		this.school = school;
 	}
 
 	private String name;
@@ -58,14 +58,6 @@ public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAwa
 	private int age;
 
 	private School school;
-
-	public School getSchool() {
-		return school;
-	}
-
-	public void setSchool(School school) {
-		this.school = school;
-	}
 
 	public String getName() {
 		return name;

@@ -5,9 +5,9 @@
                        https://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="teacher" class="com.huge.pojo.Teacher">
+		<constructor-arg ref="school" name="school"/>
 		<property name="name" value="sean"/>
 		<property name="age" value="11"/>
-		<property name="school" ref="school"/>
 	</bean>
 
 	<bean id="school" class="com.huge.pojo.School">

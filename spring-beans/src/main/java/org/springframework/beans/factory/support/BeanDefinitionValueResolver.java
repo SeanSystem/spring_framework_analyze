@@ -104,11 +104,12 @@ class BeanDefinitionValueResolver {
 	 * @param value the value object to resolve
 	 * @return the resolved object
 	 */
+	// 获取bean各种属性类型对应的属性值
 	@Nullable
 	public Object resolveValueIfNecessary(Object argName, @Nullable Object value) {
 		// We must check each value to see whether it requires a runtime reference
 		// to another bean to be resolved.
-		if (value instanceof RuntimeBeanReference) {
+		if (value instanceof RuntimeBeanReference) { // 处理属性类型为对象情况
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
 			return resolveReference(argName, ref);
 		}
