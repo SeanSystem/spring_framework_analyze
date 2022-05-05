@@ -84,10 +84,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			// 实例化bean
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
 			// Must generate CGLIB subclass.
+			// 对于需要覆写的方法的那些bean的实例化，其实就是通过cglib动态代理来做的
 			return instantiateWithMethodInjection(bd, beanName, owner);
 		}
 	}

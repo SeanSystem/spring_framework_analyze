@@ -59,17 +59,23 @@ public class BeansDtdResolver implements EntityResolver {
 					"] and system ID [" + systemId + "]");
 		}
 
+		// 1. 判断 systemId 不为空，并且以.dtd为后缀
 		if (systemId != null && systemId.endsWith(DTD_EXTENSION)) {
 			int lastPathSeparator = systemId.lastIndexOf('/');
+			// 2. 定位spring-beans在字符串systemId中的位置
 			int dtdNameStart = systemId.indexOf(DTD_NAME, lastPathSeparator);
 			if (dtdNameStart != -1) {
+				// 3. 拼接dtd文件名称：spring-beans.dtd
 				String dtdFile = DTD_NAME + DTD_EXTENSION;
 				if (logger.isTraceEnabled()) {
 					logger.trace("Trying to locate [" + dtdFile + "] in Spring jar on classpath");
 				}
 				try {
+					// 4. 从classpath中，将spring-beans.dtd生命文件，封装为资源ClassPathResource
 					Resource resource = new ClassPathResource(dtdFile, getClass());
+					// 5. 创建InputSource，将dtd对应的输入流
 					InputSource source = new InputSource(resource.getInputStream());
+					// 6. 将publicId，systemId 都封装到InputSource中
 					source.setPublicId(publicId);
 					source.setSystemId(systemId);
 					if (logger.isTraceEnabled()) {

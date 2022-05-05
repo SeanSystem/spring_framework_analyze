@@ -614,6 +614,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @see #AUTOWIRE_BY_TYPE
 	 */
 	public int getResolvedAutowireMode() {
+		// 如果是自动自动探测装配模式
 		if (this.autowireMode == AUTOWIRE_AUTODETECT) {
 			// Work out whether to apply setter autowiring or constructor autowiring.
 			// If it has a no-arg constructor it's deemed to be setter autowiring,
@@ -621,12 +622,15 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 			Constructor<?>[] constructors = getBeanClass().getConstructors();
 			for (Constructor<?> constructor : constructors) {
 				if (constructor.getParameterCount() == 0) {
+					// 如果存在构造方法参数个数为0的情况，就通过类型来自动装配
 					return AUTOWIRE_BY_TYPE;
 				}
 			}
+			// 如果bean的所有构造方法都含有参数，就通过构造方法自动装配
 			return AUTOWIRE_CONSTRUCTOR;
 		}
 		else {
+			// 默认不自动装配
 			return this.autowireMode;
 		}
 	}
@@ -1138,6 +1142,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 		// Check that lookup methods exist and determine their overloaded status.
 		if (hasMethodOverrides()) {
+			// 如果存在MethodOverrides属性，进行遍历
 			getMethodOverrides().getOverrides().forEach(this::prepareMethodOverride);
 		}
 	}
@@ -1158,6 +1163,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 		}
 		else if (count == 1) {
 			// Mark override as not overloaded, to avoid the overhead of arg type checking.
+			// 将overloaded设置为false，避免方法重载
 			mo.setOverloaded(false);
 		}
 	}

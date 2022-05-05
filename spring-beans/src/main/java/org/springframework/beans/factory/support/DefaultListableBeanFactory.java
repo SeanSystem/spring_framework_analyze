@@ -199,6 +199,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 * @param parentBeanFactory the parent BeanFactory
 	 */
 	public DefaultListableBeanFactory(@Nullable BeanFactory parentBeanFactory) {
+		// 调用父类构造方法
 		super(parentBeanFactory);
 	}
 
@@ -930,8 +931,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		Assert.hasText(beanName, "Bean name must not be empty");
 		Assert.notNull(beanDefinition, "BeanDefinition must not be null");
 
+		// 如果beanDefinition 是AbstractBeanDefinition
 		if (beanDefinition instanceof AbstractBeanDefinition) {
 			try {
+				// 校验beanDefinition 中的methodOverride属性
 				((AbstractBeanDefinition) beanDefinition).validate();
 			}
 			catch (BeanDefinitionValidationException ex) {
@@ -942,7 +945,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
 		if (existingDefinition != null) { // 检测Bean是否已经注册过
-			if (!isAllowBeanDefinitionOverriding()) { // 如果不允许覆盖，则抛出异常
+			if (!isAllowBeanDefinitionOverriding()) { // 如果不允许覆盖，则抛出异常，默认是true
 				throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
 			}
 			else if (existingDefinition.getRole() < beanDefinition.getRole()) {
@@ -967,6 +970,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
+			// 存在的进行覆盖
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else {
@@ -983,6 +987,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 			else {
 				// Still in startup registration phase
+				// 将BeanDefinition放入beanDefinitionMap
 				this.beanDefinitionMap.put(beanName, beanDefinition);
 				this.beanDefinitionNames.add(beanName);
 				removeManualSingletonName(beanName); // 移除已经创建的对象
@@ -990,6 +995,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			this.frozenBeanDefinitionNames = null;
 		}
 
+		// 如果当前需要注册的beanName已经存在或已经创建了单例bean
 		if (existingDefinition != null || containsSingleton(beanName)) {
 			resetBeanDefinition(beanName);
 		}

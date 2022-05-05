@@ -63,6 +63,10 @@ import org.springframework.beans.BeansException;
 public interface BeanFactoryPostProcessor {
 
 	/**
+	 * 在ApplicationContext初始化完成之后，可以通过该方法来修改ApplicationContext内部的beanFactory
+	 * 这个时候，所有的bean的beanDefinition已经加载到spring容器中了，但是这些bean还没有实例化，允许我们覆盖
+	 * 该方法，然后在bean中添加一些属性
+	 *
 	 * Modify the application context's internal bean factory after its standard
 	 * initialization. All bean definitions will have been loaded, but no beans
 	 * will have been instantiated yet. This allows for overriding or adding

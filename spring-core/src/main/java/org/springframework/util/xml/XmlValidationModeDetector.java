@@ -99,6 +99,7 @@ public class XmlValidationModeDetector {
 				if (this.inComment || !StringUtils.hasText(content)) {
 					continue;
 				}
+				// 内容中是否包含DOCTYPE，如果包含返回DTD校验类型
 				if (hasDoctype(content)) {
 					isDtdValidated = true;
 					break;

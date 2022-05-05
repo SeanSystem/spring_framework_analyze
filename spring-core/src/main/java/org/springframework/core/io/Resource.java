@@ -49,6 +49,7 @@ import org.springframework.lang.Nullable;
  * @see ByteArrayResource
  * @see InputStreamResource
  */
+// spring将所有使用到的资源抽象为Resource
 public interface Resource extends InputStreamSource {
 
 	/**
@@ -57,6 +58,7 @@ public interface Resource extends InputStreamSource {
 	 * existence of a {@code Resource} handle only guarantees a valid
 	 * descriptor handle.
 	 */
+	// 判断资源是否存在
 	boolean exists();
 
 	/**
@@ -70,6 +72,7 @@ public interface Resource extends InputStreamSource {
 	 * @see #getInputStream()
 	 * @see #exists()
 	 */
+	// 资源是否可读
 	default boolean isReadable() {
 		return exists();
 	}
@@ -80,6 +83,7 @@ public interface Resource extends InputStreamSource {
 	 * and must be read and closed to avoid resource leaks.
 	 * <p>Will be {@code false} for typical resource descriptors.
 	 */
+	// 资源是否打开
 	default boolean isOpen() {
 		return false;
 	}
@@ -92,6 +96,7 @@ public interface Resource extends InputStreamSource {
 	 * @since 5.0
 	 * @see #getFile()
 	 */
+	// 判断资源是否是文件类型
 	default boolean isFile() {
 		return false;
 	}
@@ -101,6 +106,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException if the resource cannot be resolved as URL,
 	 * i.e. if the resource is not available as descriptor
 	 */
+	// 资源转换为URL
 	URL getURL() throws IOException;
 
 	/**
@@ -109,6 +115,7 @@ public interface Resource extends InputStreamSource {
 	 * i.e. if the resource is not available as descriptor
 	 * @since 2.5
 	 */
+	// 资源转换为URI
 	URI getURI() throws IOException;
 
 	/**
@@ -118,6 +125,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException in case of general resolution/reading failures
 	 * @see #getInputStream()
 	 */
+	// 资源转换为文件
 	File getFile() throws IOException;
 
 	/**
@@ -140,6 +148,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException if the resource cannot be resolved
 	 * (in the file system or as some other known physical resource type)
 	 */
+	// 资源长度
 	long contentLength() throws IOException;
 
 	/**
@@ -163,6 +172,7 @@ public interface Resource extends InputStreamSource {
 	 * <p>Returns {@code null} if this type of resource does not
 	 * have a filename.
 	 */
+	// 获取资源名称
 	@Nullable
 	String getFilename();
 
@@ -173,6 +183,7 @@ public interface Resource extends InputStreamSource {
 	 * from their {@code toString} method.
 	 * @see Object#toString()
 	 */
+	// 资源描述，用于打印资源的日志文件
 	String getDescription();
 
 }
