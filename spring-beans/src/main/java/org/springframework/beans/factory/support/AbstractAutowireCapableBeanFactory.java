@@ -636,11 +636,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (earlySingletonReference != null) {
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
-				} else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
+				}
+				// 判断是否有其他的bean依赖当前实例化的bean
+				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
 					for (String dependentBean : dependentBeans) {
 						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
+							// 将那些依赖当前实例化的bean的名称，添加到集合actualDependentBeans中
 							actualDependentBeans.add(dependentBean);
 						}
 					}
@@ -659,6 +662,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Register bean as disposable.
 		try {
+			// 为bean注册DisposableBean
 			registerDisposableBeanIfNecessary(beanName, bean, mbd);
 		} catch (BeanDefinitionValidationException ex) {
 			throw new BeanCreationException(
@@ -1909,6 +1913,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (System.getSecurityManager() != null) {
 				try {
 					AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+						// 执行afterPropertiesSet方法
 						((InitializingBean) bean).afterPropertiesSet();
 						return null;
 					}, getAccessControlContext());
@@ -1924,8 +1929,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 如果实现了自定义的init方法，执行自定义init方法
 			String initMethodName = mbd.getInitMethodName();
 			if (StringUtils.hasLength(initMethodName) &&
+					// 不是InitisInitializingBean的示例，指定的初始化方法也不是InitisInitializingBean的接口方法
 					!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
+					// 初始化方法不是外部管理
 					!mbd.isExternallyManagedInitMethod(initMethodName)) {
+				// 指定定制化的初始化方法
 				invokeCustomInitMethod(beanName, bean, mbd);
 			}
 		}

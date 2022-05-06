@@ -348,21 +348,25 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					});
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
-
+				// 如果当前BeanDefinition为原型protoType类型的，则开始实例化原型protoType类型的bean
 				else if (mbd.isPrototype()) {
 					// It's a prototype -> create a new instance.
 					Object prototypeInstance = null;
 					try {
+						// 实例化bean之前的处理
 						beforePrototypeCreation(beanName);
+						// 创建原型protoType类型的bean
 						prototypeInstance = createBean(beanName, mbd, args);
 					}
 					finally {
+						// 实例化bean之后的处理
 						afterPrototypeCreation(beanName);
 					}
 					bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
 				}
 
 				else {
+					// 获取对象作用域
 					String scopeName = mbd.getScope();
 					if (!StringUtils.hasLength(scopeName)) {
 						throw new IllegalStateException("No scope name defined for bean '" + beanName + "'");
@@ -373,11 +377,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 					try {
 						Object scopedInstance = scope.get(beanName, () -> {
+							// 实例化bean之前的处理
 							beforePrototypeCreation(beanName);
 							try {
+								// 创建其他作用域类型的bean
 								return createBean(beanName, mbd, args);
 							}
 							finally {
+								// 实例化bean之后的处理
 								afterPrototypeCreation(beanName);
 							}
 						});
@@ -1901,6 +1908,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// Register a DisposableBean implementation that performs all destruction
 				// work for the given bean: DestructionAwareBeanPostProcessors,
 				// DisposableBean interface, custom destroy method.
+				// 为bean注册DisposableBeanAdapter实现类，也就是bean销毁相关方法
 				registerDisposableBean(beanName,
 						new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
 			}

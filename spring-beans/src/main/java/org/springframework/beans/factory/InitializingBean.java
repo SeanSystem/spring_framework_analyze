@@ -34,6 +34,9 @@ package org.springframework.beans.factory;
 public interface InitializingBean {
 
 	/**
+	 * 当bean的属性都设置完成之后，并且各种Aware接口道调用完成知乎，该方法允许bean的实例设置完所有的属性之后
+	 * 对bean进行一下配置和最终的初始化
+	 *
 	 * Invoked by the containing {@code BeanFactory} after it has set all bean properties
 	 * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
 	 * <p>This method allows the bean instance to perform validation of its overall
