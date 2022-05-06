@@ -129,7 +129,9 @@ public abstract class AnnotationUtils {
 	 * @see #isCandidateClass(Class, String)
 	 */
 	public static boolean isCandidateClass(Class<?> clazz, Collection<Class<? extends Annotation>> annotationTypes) {
+		// 遍历每个注解 @Autowired @Value
 		for (Class<? extends Annotation> annotationType : annotationTypes) {
+			// 判断clazz是否符合条件
 			if (isCandidateClass(clazz, annotationType)) {
 				return true;
 			}

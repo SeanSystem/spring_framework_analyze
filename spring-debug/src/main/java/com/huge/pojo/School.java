@@ -1,6 +1,7 @@
 package com.huge.pojo;
 
 import com.huge.annotion.MyComponent;
+import org.springframework.stereotype.Component;
 
 /**
  * @author by hyb
