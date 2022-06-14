@@ -218,6 +218,7 @@ class ConfigurationClassEnhancer {
 
 		@Override
 		protected ClassGenerator transform(ClassGenerator cg) throws Exception {
+			// 生成的代理类添加了$$beanFactory属性
 			ClassEmitterTransformer transformer = new ClassEmitterTransformer() {
 				@Override
 				public void end_class() {

@@ -256,7 +256,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 		// 记录当前已经调用了
 		this.factoriesPostProcessed.add(factoryId);
-		// 为调用
+		// 保证Configuration类的BeanDefinition信息已经加载
 		if (!this.registriesPostProcessed.contains(factoryId)) {
 			// BeanDefinitionRegistryPostProcessor hook apparently not supported...
 			// Simply call processConfigurationClasses lazily at this point then.
