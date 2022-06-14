@@ -119,7 +119,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
-		// 如果存在BeanFactory，销毁所有已经创建的Bean，关闭BeanFactory
+		// 如果当前ApplicationContext存在BeanFactory，销毁所有已经创建的Bean，关闭BeanFactory
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();

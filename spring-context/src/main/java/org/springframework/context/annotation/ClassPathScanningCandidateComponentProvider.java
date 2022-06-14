@@ -434,11 +434,12 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				try {
 					// 将resource封装到MetadataReader中，MetadataReader为资源resource元数据的访问组件
 					MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
-					// 判断当前的Resource是否符合后续条件
+					// 判断当前的Resource是否符合后续条件，是否有@Component之类的注解
 					if (isCandidateComponent(metadataReader)) {
 						// metadataReader封装到ScannedGenericBeanDefinition类型的BeanDefinition中
 						ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 						sbd.setSource(resource);
+						// 判断类定义是否符合Component类条件
 						if (isCandidateComponent(sbd)) {
 							if (debugEnabled) {
 								logger.debug("Identified candidate component class: " + resource);
@@ -494,13 +495,16 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @return whether the class qualifies as a candidate component
 	 */
 	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
+		// 判断是否是需要排除注解类
 		for (TypeFilter tf : this.excludeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				return false;
 			}
 		}
+		// 判断是否是需要加载的注解类，如@Component注解的类
 		for (TypeFilter tf : this.includeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
+				// 判断是否匹配@Condition条件，没有该注解视为匹配
 				return isConditionMatch(metadataReader);
 			}
 		}

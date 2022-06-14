@@ -522,7 +522,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 初始化初级容器DeanFactory，并解析xml文件
+			// 初始化初级容器DeanFactory，并加载bean信息
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); // 创建beanFactory，加载注册BeanDefinitions
 
 			// Prepare the bean factory for use in this context.
@@ -615,7 +615,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
-		// 空实现，留给子类去实现，母的是在上下文环境中，解析各种${}参数占位符
+		// 空实现，留给子类去实现，目的是在上下文环境中，解析各种${}参数占位符
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
