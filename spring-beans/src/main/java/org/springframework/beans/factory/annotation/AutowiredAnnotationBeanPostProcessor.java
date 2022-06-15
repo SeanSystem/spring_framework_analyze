@@ -668,10 +668,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				}
 			}
 			else {
+				// 获取字段的属性值
 				value = resolveFieldValue(field, bean, beanName);
 			}
 			if (value != null) {
 				ReflectionUtils.makeAccessible(field);
+				// 通过反射方式设置属性值
 				field.set(bean, value);
 			}
 		}
@@ -685,6 +687,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			TypeConverter typeConverter = beanFactory.getTypeConverter();
 			Object value;
 			try {
+				// 通过beanFactory查找依赖的属性值
 				value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 			}
 			catch (BeansException ex) {
@@ -695,6 +698,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 					Object cachedFieldValue = null;
 					if (value != null || this.required) {
 						cachedFieldValue = desc;
+						// 注册依赖的bean
 						registerDependentBeans(beanName, autowiredBeanNames);
 						if (autowiredBeanNames.size() == 1) {
 							String autowiredBeanName = autowiredBeanNames.iterator().next();
@@ -748,11 +752,13 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				}
 			}
 			else {
+				// 获取方法参数对应的参数值
 				arguments = resolveMethodArguments(method, bean, beanName);
 			}
 			if (arguments != null) {
 				try {
 					ReflectionUtils.makeAccessible(method);
+					// 通过反射方式执行方法
 					method.invoke(bean, arguments);
 				}
 				catch (InvocationTargetException ex) {
@@ -788,6 +794,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				currDesc.setContainingClass(bean.getClass());
 				descriptors[i] = currDesc;
 				try {
+					// 获取方法参数对应的参数值
 					Object arg = beanFactory.resolveDependency(currDesc, beanName, autowiredBeans, typeConverter);
 					if (arg == null && !this.required) {
 						arguments = null;
@@ -803,6 +810,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				if (!this.cached) {
 					if (arguments != null) {
 						DependencyDescriptor[] cachedMethodArguments = Arrays.copyOf(descriptors, arguments.length);
+						// 注册依赖的bean
 						registerDependentBeans(beanName, autowiredBeans);
 						if (autowiredBeans.size() == argumentCount) {
 							Iterator<String> it = autowiredBeans.iterator();
