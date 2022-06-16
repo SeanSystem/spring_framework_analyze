@@ -346,7 +346,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 					if (logger.isTraceEnabled()) {
 						logger.trace("Invoking init method on bean '" + beanName + "': " + element.getMethod());
 					}
-					// 执行初始化方法
+					// 通过反射方式执行注解@PostConstruct初始化方法
 					element.invoke(target);
 				}
 			}
@@ -357,10 +357,12 @@ public class InitDestroyAnnotationBeanPostProcessor
 			Collection<LifecycleElement> destroyMethodsToUse =
 					(checkedDestroyMethods != null ? checkedDestroyMethods : this.destroyMethods);
 			if (!destroyMethodsToUse.isEmpty()) {
+				// 遍历注解@PreDestory注解对应的元数据信息
 				for (LifecycleElement element : destroyMethodsToUse) {
 					if (logger.isTraceEnabled()) {
 						logger.trace("Invoking destroy method on bean '" + beanName + "': " + element.getMethod());
 					}
+					// 通过反射方式执行注解@PreDestory的方法
 					element.invoke(target);
 				}
 			}
