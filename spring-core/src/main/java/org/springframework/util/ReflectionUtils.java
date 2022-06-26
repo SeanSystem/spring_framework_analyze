@@ -50,6 +50,7 @@ public abstract class ReflectionUtils {
 	 * which are not declared on {@code java.lang.Object}.
 	 * @since 3.0.5
 	 */
+	// 不是桥接和合成的方法
 	public static final MethodFilter USER_DECLARED_METHODS =
 			(method -> !method.isBridge() && !method.isSynthetic());
 

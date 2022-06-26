@@ -223,6 +223,7 @@ public abstract class AopUtils {
 	 */
 	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
 		Assert.notNull(pc, "Pointcut must not be null");
+		// 先进行类匹配
 		if (!pc.getClassFilter().matches(targetClass)) {
 			return false;
 		}
@@ -240,13 +241,18 @@ public abstract class AopUtils {
 
 		Set<Class<?>> classes = new LinkedHashSet<>();
 		if (!Proxy.isProxyClass(targetClass)) {
+			// 将目标类，也就是当前要匹配的bean，放入classes集合中
 			classes.add(ClassUtils.getUserClass(targetClass));
 		}
+		// 将目标类实现的接口也放入classes集合中
 		classes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
 
+		// 遍历处理目标类和目标类接口
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
+			// 遍历处理目标类方法
 			for (Method method : methods) {
+				// 目标类中只要有一个方法被匹配到，那么直接返回true，目标类需要被代理
 				if (introductionAwareMethodMatcher != null ?
 						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions) :
 						methodMatcher.matches(method, targetClass)) {
@@ -281,9 +287,11 @@ public abstract class AopUtils {
 	 * @return whether the pointcut can apply on any method
 	 */
 	public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) {
+		// 是否是IntroductionAdvisor类型增强，是进行类级别匹配
 		if (advisor instanceof IntroductionAdvisor) {
 			return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
 		}
+		// 是普通增强情况PointcutAdvisor
 		else if (advisor instanceof PointcutAdvisor) {
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
 			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
@@ -308,6 +316,7 @@ public abstract class AopUtils {
 		}
 		List<Advisor> eligibleAdvisors = new ArrayList<>();
 		for (Advisor candidate : candidateAdvisors) {
+			// IntroductionAdvisor是引介增强，主要针对类级别的增强
 			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
 				eligibleAdvisors.add(candidate);
 			}
@@ -318,6 +327,7 @@ public abstract class AopUtils {
 				// already processed
 				continue;
 			}
+			// 处理普通增强，找到与当前bean匹配的增强
 			if (canApply(candidate, clazz, hasIntroductions)) {
 				eligibleAdvisors.add(candidate);
 			}

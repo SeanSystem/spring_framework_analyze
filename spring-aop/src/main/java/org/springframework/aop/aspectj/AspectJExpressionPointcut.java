@@ -291,12 +291,15 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 
 	@Override
 	public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
+		// 检查切点表达式是否已经准备好匹配，就是切点表达式是否已经解析完成
 		obtainPointcutExpression();
+		// 匹配核心逻辑
 		ShadowMatch shadowMatch = getTargetShadowMatch(method, targetClass);
 
 		// Special handling for this, target, @this, @target, @annotation
 		// in Spring - we can optimize since we know we have exactly this class,
 		// and there will never be matching subclass at runtime.
+		// 返回true表示这个类需要创建代理
 		if (shadowMatch.alwaysMatches()) {
 			return true;
 		}
@@ -444,11 +447,13 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 				}
 			}
 		}
+		// 获取匹配结果
 		return getShadowMatch(targetMethod, method);
 	}
 
 	private ShadowMatch getShadowMatch(Method targetMethod, Method originalMethod) {
 		// Avoid lock contention for known Methods through concurrent access...
+		// 先检测缓存是否存在
 		ShadowMatch shadowMatch = this.shadowMatchCache.get(targetMethod);
 		if (shadowMatch == null) {
 			synchronized (this.shadowMatchCache) {
@@ -459,6 +464,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 					Method methodToMatch = targetMethod;
 					try {
 						try {
+							// 切点表达式与方法进行匹配
 							shadowMatch = obtainPointcutExpression().matchesMethodExecution(methodToMatch);
 						}
 						catch (ReflectionWorldException ex) {
