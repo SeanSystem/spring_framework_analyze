@@ -236,10 +236,14 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected Object doGetTransaction() {
+		// 创建事务对象
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		// 设置是否允许savePoint
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		// 获取当前线程绑定的数据源连接信息
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		// 设置数据源信息
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
@@ -256,6 +260,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		Connection con = null;
 
 		try {
+			// 如果事务连接信息为空或连接信息已经处于事务中，创建新的连接信息
 			if (!txObject.hasConnectionHolder() ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
 				Connection newCon = obtainDataSource().getConnection();
@@ -264,10 +269,12 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				}
 				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
 			}
-
+			// 设置事务连接信息为同步状态，表示处于该连接已经处于事务中
 			txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
+			// 获取数据库连接信息
 			con = txObject.getConnectionHolder().getConnection();
 
+			// 根据definition定义的readOnly和隔离级别设置连接的readOnly和隔离级别
 			Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
 			txObject.setPreviousIsolationLevel(previousIsolationLevel);
 			txObject.setReadOnly(definition.isReadOnly());
@@ -275,6 +282,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
 			// so we don't want to do it unnecessarily (for example if we've explicitly
 			// configured the connection pool to set it already).
+			// 关闭事务自动提交
 			if (con.getAutoCommit()) {
 				txObject.setMustRestoreAutoCommit(true);
 				if (logger.isDebugEnabled()) {
@@ -283,15 +291,19 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				con.setAutoCommit(false);
 			}
 
+			// 如果指定了readOnly，设置事务为readOnly
 			prepareTransactionalConnection(con, definition);
+			// 设置事务活动状态为true
 			txObject.getConnectionHolder().setTransactionActive(true);
 
+			// 设置事务超时时间
 			int timeout = determineTimeout(definition);
 			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
 			// Bind the connection holder to the thread.
+			// 绑定新的连接当当前线程
 			if (txObject.isNewConnectionHolder()) {
 				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
 			}
@@ -326,6 +338,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Committing JDBC transaction on Connection [" + con + "]");
 		}
 		try {
+			// 提交事务
 			con.commit();
 		}
 		catch (SQLException ex) {
@@ -341,6 +354,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Rolling back JDBC transaction on Connection [" + con + "]");
 		}
 		try {
+			// 事务回滚
 			con.rollback();
 		}
 		catch (SQLException ex) {
