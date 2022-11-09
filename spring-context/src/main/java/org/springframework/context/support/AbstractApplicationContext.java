@@ -522,8 +522,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 初始化初级容器DeanFactory，并加载bean信息
-			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); // 创建beanFactory，加载注册BeanDefinitions
+			// 初始化初级容器DeanFactory(DefaultListableBeanFactory类型)，并加载bean信息(AnnationConfigApplicaitonContext不会在此加载处加载bean definition)
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
 			// 对spring容器beanFactory做一些准备工作
@@ -543,7 +543,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
-				// 在spring容器中，初始化消息源MessageResource
+				// 在spring容器中，初始化消息源MessageResource，用于支持国际化
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
@@ -734,10 +734,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		// 执行BeanFactory级别的后置处理器
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
 		// (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
+		// 在beanFactory中，为代码织入AspectJ，添加初始化LoadTimeWeaverAwareProcessor的后置处理器
 		if (beanFactory.getTempClassLoader() == null && beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 			beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
 			beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
@@ -750,6 +752,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before any instantiation of application beans.
 	 */
 	protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		// 注册bean级别后置处理器
 		PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
 	}
 

@@ -875,8 +875,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		// Trigger initialization of all non-lazy singleton beans...
 		for (String beanName : beanNames) {
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName); // 获取合并的BeanDefinition，主要是针对可能有继承关系的类
-			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
-				if (isFactoryBean(beanName)) { // 是否已经存在BeanFactory中
+			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) { // 非抽象、单例、非懒加载
+				if (isFactoryBean(beanName)) { // 是否为FactoryBean
+					// 获取FactoryBean对象
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -890,18 +891,19 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							isEagerInit = (factory instanceof SmartFactoryBean &&
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
-						if (isEagerInit) {
+						if (isEagerInit) { // 判断是否需要进行初始化，即获取FactoryBean管理的真正的实例（通过getObject()获取的实例）
 							getBean(beanName);
 						}
 					}
 				}
 				else {
-					getBean(beanName);
+					getBean(beanName); // 获取对象实例
 				}
 			}
 		}
 
 		// Trigger post-initialization callback for all applicable beans...
+		// 对SmartInitializingSingleton接口的单例对象执行实例化后的后置处理
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
 			if (singletonInstance instanceof SmartInitializingSingleton) {

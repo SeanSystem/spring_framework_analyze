@@ -495,7 +495,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @return whether the class qualifies as a candidate component
 	 */
 	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
-		// 判断是否是需要排除注解类
+		// 判断是否是需要排除的注解类
 		for (TypeFilter tf : this.excludeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				return false;
@@ -503,6 +503,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 		}
 		// 判断是否是需要加载的注解类，如@Component注解的类
 		for (TypeFilter tf : this.includeFilters) {
+			// 判断是否匹配该注解
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				// 判断是否匹配@Condition条件，没有该注解视为匹配
 				return isConditionMatch(metadataReader);
@@ -522,6 +523,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 			this.conditionEvaluator =
 					new ConditionEvaluator(getRegistry(), this.environment, this.resourcePatternResolver);
 		}
+		// 校验是否需要跳过，也就是是否匹配@Condition注解中的条件
 		return !this.conditionEvaluator.shouldSkip(metadataReader.getAnnotationMetadata());
 	}
 

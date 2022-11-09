@@ -22,6 +22,7 @@ public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAwa
 
 	@Override
 	public void setBeanName(String name) {
+		beanName = name;
 		System.out.println("set bean name");
 	}
 
@@ -57,7 +58,13 @@ public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAwa
 
 	private int age;
 
+	private String beanName;
+
 	private School school;
+
+	public String getBeanName() {
+		return beanName;
+	}
 
 	public String getName() {
 		return name;
