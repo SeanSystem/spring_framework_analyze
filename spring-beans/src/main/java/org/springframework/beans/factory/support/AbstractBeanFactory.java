@@ -305,7 +305,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			try {
 				// 合并beanDefinition
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
-				// 检查下合并好的RootDefinition是否达到示例bean的条件
+				// 检查下合并好的RootDefinition是否达到实例bean的条件
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.

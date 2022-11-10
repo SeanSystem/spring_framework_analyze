@@ -5,15 +5,21 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * @author by hyb
  * @date 2022/3/13 18:13
  */
+@Component
 public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAware, ApplicationContextAware,  InitializingBean {
+
+	@Autowired
+	private School school;
 
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -59,8 +65,6 @@ public class Teacher implements BeanPostProcessor, BeanNameAware, BeanFactoryAwa
 	private int age;
 
 	private String beanName;
-
-	private School school;
 
 	public String getBeanName() {
 		return beanName;
