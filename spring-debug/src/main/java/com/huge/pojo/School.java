@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * @author by hyb
  * @date 2022/5/3 17:07
  */
-@MyComponent
+@Component
 public class School {
 
 	private Teacher teacher;
