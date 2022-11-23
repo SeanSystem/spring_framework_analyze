@@ -1018,12 +1018,13 @@ public class DispatcherServlet extends FrameworkServlet {
 				// Determine handler for the current request.
 				// 获取请求对应的Handler，此处获取的是HandlerExecutionChain（包含拦截器）
 				mappedHandler = getHandler(processedRequest);
-				if (mappedHandler == null) {
-					noHandlerFound(processedRequest, response);
+				if (mappedHandler == null) { // 如果未找到Handler方法
+					noHandlerFound(processedRequest, response); // 响应404
 					return;
 				}
 
 				// Determine handler adapter for the current request.
+				// 获取处理器适配器，默认为RequestMappingHandlerAdapter
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
@@ -1036,11 +1037,13 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				// 执行拦截器的preHandle方法
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// Actually invoke the handler.
+				// 执行Handler
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
@@ -1048,6 +1051,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				applyDefaultViewName(processedRequest, mv);
+				// 执行拦截器的postHandle方法
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
