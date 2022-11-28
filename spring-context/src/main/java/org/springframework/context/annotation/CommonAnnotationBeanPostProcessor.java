@@ -531,16 +531,21 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 		if (factory instanceof AutowireCapableBeanFactory) {
 			AutowireCapableBeanFactory beanFactory = (AutowireCapableBeanFactory) factory;
 			DependencyDescriptor descriptor = element.getDependencyDescriptor();
+			/**
+			 * fallbackToDefaultTypeMatch: 默认为true
+			 * isDefaultName: 如果@Resource注解未指定名称，则为true，name使用属性名
+			 * !factory.containsBean(name): spring容器中不包含该名称的bean
+			 */
 			if (this.fallbackToDefaultTypeMatch && element.isDefaultName && !factory.containsBean(name)) {
 				autowiredBeanNames = new LinkedHashSet<>();
-				// 获取属性值
+				// 获取属性值，根据属性类型获取
 				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null);
 				if (resource == null) {
 					throw new NoSuchBeanDefinitionException(element.getLookupType(), "No resolvable resource object");
 				}
 			}
 			else {
-				// 获取属性值
+				// 获取属性值，根据指定的名称获取
 				resource = beanFactory.resolveBeanByName(name, descriptor);
 				autowiredBeanNames = Collections.singleton(name);
 			}
@@ -634,20 +639,25 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 		public ResourceElement(Member member, AnnotatedElement ae, @Nullable PropertyDescriptor pd) {
 			super(member, pd);
+			// 获取@Resource注解属性
 			Resource resource = ae.getAnnotation(Resource.class);
+			// 获取注解name属性值
 			String resourceName = resource.name();
+			// 获取注解type属性值
 			Class<?> resourceType = resource.type();
+			// 如果name属性值没有指定，则标识使用默认名称（属性名或setxxx方法名截取的xxx名）
 			this.isDefaultName = !StringUtils.hasLength(resourceName);
 			if (this.isDefaultName) {
-				resourceName = this.member.getName();
+				resourceName = this.member.getName(); // 获取属性名或方法名
 				if (this.member instanceof Method && resourceName.startsWith("set") && resourceName.length() > 3) {
+					// 如果是set方法注入，截取set后方法名作为resourceName
 					resourceName = Introspector.decapitalize(resourceName.substring(3));
 				}
 			}
 			else if (embeddedValueResolver != null) {
 				resourceName = embeddedValueResolver.resolveStringValue(resourceName);
 			}
-			if (Object.class != resourceType) {
+			if (Object.class != resourceType) { // 如果指定了resourceType，检查指定的类型是否合法（是否是属性或方法注入的bean类型）
 				checkResourceType(resourceType);
 			}
 			else {
@@ -658,12 +668,13 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			this.lookupType = resourceType;
 			String lookupValue = resource.lookup();
 			this.mappedName = (StringUtils.hasLength(lookupValue) ? lookupValue : resource.mappedName());
-			Lazy lazy = ae.getAnnotation(Lazy.class);
+			Lazy lazy = ae.getAnnotation(Lazy.class); // 获取属性或方法上的@Lazy注解，表示是否延迟注入
 			this.lazyLookup = (lazy != null && lazy.value());
 		}
 
 		@Override
 		protected Object getResourceToInject(Object target, @Nullable String requestingBeanName) {
+			// 如果是延迟注入，创建代理对象注入，否则直接获取注入对象
 			return (this.lazyLookup ? buildLazyResourceProxy(this, requestingBeanName) :
 					getResource(this, requestingBeanName));
 		}

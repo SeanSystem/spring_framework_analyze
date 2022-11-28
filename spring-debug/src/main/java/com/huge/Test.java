@@ -1,6 +1,7 @@
 package com.huge;
 
 
+import com.huge.pojo.People;
 import com.huge.pojo.Teacher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -14,7 +15,7 @@ public class Test {
 	public static void main(String[] args) {
 
 		/*ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-		Object school = context.getBean("school");
+		//Object school = context.getBean("school");
 		Object teacher = context.getBean("teacher");
 		System.out.println(teacher);*/
 

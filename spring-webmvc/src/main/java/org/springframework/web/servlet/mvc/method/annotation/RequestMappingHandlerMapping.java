@@ -178,6 +178,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	@Override
 	@SuppressWarnings("deprecation")
 	public void afterPropertiesSet() {
+		// 创建默认配置信息
 		this.config = new RequestMappingInfo.BuilderConfiguration();
 		this.config.setUrlPathHelper(getUrlPathHelper());
 		this.config.setPathMatcher(getPathMatcher());
@@ -185,7 +186,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 		this.config.setTrailingSlashMatch(useTrailingSlashMatch());
 		this.config.setRegisteredSuffixPatternMatch(useRegisteredSuffixPatternMatch());
 		this.config.setContentNegotiationManager(getContentNegotiationManager());
-
+		// 调用父类方法
 		super.afterPropertiesSet();
 	}
 
@@ -252,11 +253,13 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	@Override
 	@Nullable
 	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
+		// 创建方法对应的RequestMappingInfo
 		RequestMappingInfo info = createRequestMappingInfo(method);
-		if (info != null) {
+		if (info != null) { // 如果方法是接口方法
+			// 创建Handler类对应的RequestMappingInfo
 			RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
-			if (typeInfo != null) {
-				info = typeInfo.combine(info);
+			if (typeInfo != null) { // 如果方法上存在@RequestMapping注解信息
+				info = typeInfo.combine(info); // 合并Controller类方法和类上的@RequestMapping信息，封装为一个RequestMappingInfo
 			}
 			String prefix = getPathPrefix(handlerType);
 			if (prefix != null) {
@@ -289,9 +292,11 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 */
 	@Nullable
 	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
+		// 获取方法上的@RequestMapping注解
 		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, RequestMapping.class);
 		RequestCondition<?> condition = (element instanceof Class ?
 				getCustomTypeCondition((Class<?>) element) : getCustomMethodCondition((Method) element));
+		// 如果注解不存在返回null，存在则创建RequestMappingInfo
 		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null);
 	}
 
@@ -336,6 +341,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	protected RequestMappingInfo createRequestMappingInfo(
 			RequestMapping requestMapping, @Nullable RequestCondition<?> customCondition) {
 
+		// 根据注解信息创建RequestMappingInfo
 		RequestMappingInfo.Builder builder = RequestMappingInfo
 				.paths(resolveEmbeddedValuesInPatterns(requestMapping.path()))
 				.methods(requestMapping.method())
