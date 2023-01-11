@@ -60,9 +60,11 @@ public class ExceptionHandlerMethodResolver {
 	 * @param handlerType the type to introspect
 	 */
 	public ExceptionHandlerMethodResolver(Class<?> handlerType) {
+		// 遍历类中包含@ExceptionHandler注解的方法
 		for (Method method : MethodIntrospector.selectMethods(handlerType, EXCEPTION_HANDLER_METHODS)) {
+			// 遍历注解指定处理的异常类型
 			for (Class<? extends Throwable> exceptionType : detectExceptionMappings(method)) {
-				addExceptionMapping(exceptionType, method);
+				addExceptionMapping(exceptionType, method); // 将 key:异常类型 value: method 存入 mappedMethods
 			}
 		}
 	}
@@ -97,7 +99,7 @@ public class ExceptionHandlerMethodResolver {
 
 	private void addExceptionMapping(Class<? extends Throwable> exceptionType, Method method) {
 		Method oldMethod = this.mappedMethods.put(exceptionType, method);
-		if (oldMethod != null && !oldMethod.equals(method)) {
+		if (oldMethod != null && !oldMethod.equals(method)) { // 如果存在多个处理同一异常类型的方法，抛出异常
 			throw new IllegalStateException("Ambiguous @ExceptionHandler method mapped for [" +
 					exceptionType + "]: {" + oldMethod + ", " + method + "}");
 		}

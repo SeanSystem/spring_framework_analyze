@@ -410,9 +410,9 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 			addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, request);
 		}
 
-		if (!matches.isEmpty()) { // 如果查找到多个HandlerMethod
+		if (!matches.isEmpty()) {
 			Match bestMatch = matches.get(0);
-			if (matches.size() > 1) {
+			if (matches.size() > 1) { // 如果查找到多个HandlerMethod
 				Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
 				matches.sort(comparator);
 				bestMatch = matches.get(0);

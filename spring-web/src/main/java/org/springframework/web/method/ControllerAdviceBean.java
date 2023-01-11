@@ -261,6 +261,7 @@ public class ControllerAdviceBean implements Ordered {
 	 */
 	public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) {
 		List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
+		// 遍历所有spring容器中的类，加载存在@ControllerAdvice注解的类，封装为ControllerAdviceBean
 		for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) {
 			if (!ScopedProxyUtils.isScopedTarget(name)) {
 				ControllerAdvice controllerAdvice = context.findAnnotationOnBean(name, ControllerAdvice.class);
@@ -271,7 +272,7 @@ public class ControllerAdviceBean implements Ordered {
 				}
 			}
 		}
-		OrderComparator.sort(adviceBeans);
+		OrderComparator.sort(adviceBeans); // 对加载的类进行排序
 		return adviceBeans;
 	}
 

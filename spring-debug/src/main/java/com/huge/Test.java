@@ -6,6 +6,9 @@ import com.huge.pojo.Teacher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 /**
  * @author by hyb
  * @date 2022/3/13 17:44

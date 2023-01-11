@@ -255,31 +255,34 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	@Override
 	public void afterPropertiesSet() {
 		// Do this first, it may add ResponseBodyAdvice beans
+		// 初始化加载异常处理类，并封装为ExceptionHandlerMethodResolver存入了exceptionHandlerAdviceCache
 		initExceptionHandlerAdviceCache();
 
-		if (this.argumentResolvers == null) {
+		if (this.argumentResolvers == null) { // 获取参数解析器
 			List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
 			this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
 		}
-		if (this.returnValueHandlers == null) {
+		if (this.returnValueHandlers == null) { // 返回返回值解析器
 			List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
 			this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
 		}
 	}
 
 	private void initExceptionHandlerAdviceCache() {
-		if (getApplicationContext() == null) {
+		if (getApplicationContext() == null) { // 容器为空，直接直接返回
 			return;
 		}
 
+		// 加载spring容器中包含@ControllerAdvice注解的类
 		List<ControllerAdviceBean> adviceBeans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
 		for (ControllerAdviceBean adviceBean : adviceBeans) {
 			Class<?> beanType = adviceBean.getBeanType();
 			if (beanType == null) {
 				throw new IllegalStateException("Unresolvable type for ControllerAdviceBean: " + adviceBean);
 			}
+			// 创建ExceptionHandlerMethodResolver，构造方法中获取了异常处理类中的处理异常的方法
 			ExceptionHandlerMethodResolver resolver = new ExceptionHandlerMethodResolver(beanType);
-			if (resolver.hasExceptionMappings()) {
+			if (resolver.hasExceptionMappings()) { // 存在异常处理方法
 				this.exceptionHandlerAdviceCache.put(adviceBean, resolver);
 			}
 			if (ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
@@ -455,13 +458,14 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		if (handlerMethod != null) {
 			// Local exception handler methods on the controller class itself.
 			// To be invoked through the proxy, even in case of an interface-based proxy.
-			handlerType = handlerMethod.getBeanType();
+			handlerType = handlerMethod.getBeanType(); // 获取HandlerMethod所在的类
+			// 从缓存中获取异常解析器
 			ExceptionHandlerMethodResolver resolver = this.exceptionHandlerCache.get(handlerType);
-			if (resolver == null) {
+			if (resolver == null) { // 获取不到，尝试将自身类作为异常解析类（如果存在@ExceptionHandler注解的方法）
 				resolver = new ExceptionHandlerMethodResolver(handlerType);
 				this.exceptionHandlerCache.put(handlerType, resolver);
 			}
-			Method method = resolver.resolveMethod(exception);
+			Method method = resolver.resolveMethod(exception); // 获取处理异常的方法
 			if (method != null) {
 				return new ServletInvocableHandlerMethod(handlerMethod.getBean(), method);
 			}
@@ -472,6 +476,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			}
 		}
 
+		// todo
 		for (Map.Entry<ControllerAdviceBean, ExceptionHandlerMethodResolver> entry : this.exceptionHandlerAdviceCache.entrySet()) {
 			ControllerAdviceBean advice = entry.getKey();
 			if (advice.isApplicableToBeanType(handlerType)) {

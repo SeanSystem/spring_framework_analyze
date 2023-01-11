@@ -292,11 +292,11 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 */
 	@Nullable
 	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
-		// 获取方法上的@RequestMapping注解
+		// 获取方法上的@RequestMapping注解信息
 		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, RequestMapping.class);
 		RequestCondition<?> condition = (element instanceof Class ?
 				getCustomTypeCondition((Class<?>) element) : getCustomMethodCondition((Method) element));
-		// 如果注解不存在返回null，存在则创建RequestMappingInfo
+		// 如果注解不存在返回null，存在则根据注解信息创建RequestMappingInfo对象(对注解信息的封装)
 		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null);
 	}
 
