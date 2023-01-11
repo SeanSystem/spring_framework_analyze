@@ -479,9 +479,9 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		// todo
 		for (Map.Entry<ControllerAdviceBean, ExceptionHandlerMethodResolver> entry : this.exceptionHandlerAdviceCache.entrySet()) {
 			ControllerAdviceBean advice = entry.getKey();
-			if (advice.isApplicableToBeanType(handlerType)) {
-				ExceptionHandlerMethodResolver resolver = entry.getValue();
-				Method method = resolver.resolveMethod(exception);
+			if (advice.isApplicableToBeanType(handlerType)) { // 检查异常解析器是否适用于发生异常的Controller类
+				ExceptionHandlerMethodResolver resolver = entry.getValue(); // 异常解析器
+				Method method = resolver.resolveMethod(exception); // 根据异常类型获取处理异常的方法
 				if (method != null) {
 					return new ServletInvocableHandlerMethod(advice.resolveBean(), method);
 				}

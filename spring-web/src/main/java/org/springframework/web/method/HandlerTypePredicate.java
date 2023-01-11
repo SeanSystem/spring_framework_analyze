@@ -71,21 +71,21 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 
 	@Override
 	public boolean test(@Nullable Class<?> controllerType) {
-		if (!hasSelectors()) {
+		if (!hasSelectors()) { // 如果没有指定异常处理器处理的异常范围（@ControllerAdvice注解没有指定任何作用范围），直接返回true
 			return true;
 		}
 		else if (controllerType != null) {
-			for (String basePackage : this.basePackages) {
+			for (String basePackage : this.basePackages) { // 发生异常的Controller是否在指定的包范围内
 				if (controllerType.getName().startsWith(basePackage)) {
 					return true;
 				}
 			}
-			for (Class<?> clazz : this.assignableTypes) {
+			for (Class<?> clazz : this.assignableTypes) { // 发生异常的Controller是否在指定的类型内
 				if (ClassUtils.isAssignable(clazz, controllerType)) {
 					return true;
 				}
 			}
-			for (Class<? extends Annotation> annotationClass : this.annotations) {
+			for (Class<? extends Annotation> annotationClass : this.annotations) { // 发生异常的Controller是否在指定的注解内
 				if (AnnotationUtils.findAnnotation(controllerType, annotationClass) != null) {
 					return true;
 				}

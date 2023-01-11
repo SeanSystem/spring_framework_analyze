@@ -2,6 +2,7 @@ package com.huge.pojo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -12,6 +13,12 @@ import javax.annotation.Resource;
  */
 @Component
 public class People {
+
+	@Autowired
+	private School school;
+
+	@Value("{test:test}")
+	private String value;
 
 	private String name;
 
@@ -33,5 +40,13 @@ public class People {
 
 	public void setTeacher2(Teacher teacher2) {
 		this.teacher2 = teacher2;
+	}
+
+	public School getSchool() {
+		return school;
+	}
+
+	public void setSchool(School school) {
+		this.school = school;
 	}
 }

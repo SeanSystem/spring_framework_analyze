@@ -1124,7 +1124,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
-			render(mv, request, response);
+			render(mv, request, response); //todo 解析ModelAndView
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
 			}

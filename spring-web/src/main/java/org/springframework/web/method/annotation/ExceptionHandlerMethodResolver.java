@@ -132,7 +132,7 @@ public class ExceptionHandlerMethodResolver {
 	 */
 	@Nullable
 	public Method resolveMethodByThrowable(Throwable exception) {
-		Method method = resolveMethodByExceptionType(exception.getClass());
+		Method method = resolveMethodByExceptionType(exception.getClass()); // 根据异常类查找处理异常方法
 		if (method == null) {
 			Throwable cause = exception.getCause();
 			if (cause != null) {
@@ -150,10 +150,10 @@ public class ExceptionHandlerMethodResolver {
 	 */
 	@Nullable
 	public Method resolveMethodByExceptionType(Class<? extends Throwable> exceptionType) {
-		Method method = this.exceptionLookupCache.get(exceptionType);
+		Method method = this.exceptionLookupCache.get(exceptionType); // 先从缓存中获取
 		if (method == null) {
-			method = getMappedMethod(exceptionType);
-			this.exceptionLookupCache.put(exceptionType, method);
+			method = getMappedMethod(exceptionType); // 获取不到从mappedMethods中获取
+			this.exceptionLookupCache.put(exceptionType, method); // 将获取到的结果加入缓存中
 		}
 		return method;
 	}
@@ -164,14 +164,15 @@ public class ExceptionHandlerMethodResolver {
 	@Nullable
 	private Method getMappedMethod(Class<? extends Throwable> exceptionType) {
 		List<Class<? extends Throwable>> matches = new ArrayList<>();
+		// 遍历mappedMethods的key查找符合处理该异常类型的key
 		for (Class<? extends Throwable> mappedException : this.mappedMethods.keySet()) {
 			if (mappedException.isAssignableFrom(exceptionType)) {
 				matches.add(mappedException);
 			}
 		}
 		if (!matches.isEmpty()) {
-			matches.sort(new ExceptionDepthComparator(exceptionType));
-			return this.mappedMethods.get(matches.get(0));
+			matches.sort(new ExceptionDepthComparator(exceptionType)); // 按异常类的继承层级从小到大排序
+			return this.mappedMethods.get(matches.get(0)); // 获取第一个处理方法
 		}
 		else {
 			return null;
