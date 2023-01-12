@@ -1124,7 +1124,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
-			render(mv, request, response); //todo 解析ModelAndView
+			render(mv, request, response); // 解析ModelAndView
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
 			}
@@ -1355,9 +1355,9 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		View view;
 		String viewName = mv.getViewName();
-		if (viewName != null) {
+		if (viewName != null) { // 视图名不为空
 			// We need to resolve the view name.
-			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
+			view = resolveViewName(viewName, mv.getModelInternal(), locale, request); // 获取视图
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
 						"' in servlet with name '" + getServletName() + "'");
@@ -1380,7 +1380,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			if (mv.getStatus() != null) {
 				response.setStatus(mv.getStatus().value());
 			}
-			view.render(mv.getModelInternal(), request, response);
+			view.render(mv.getModelInternal(), request, response); // 渲染视图给定的模型返回
 		}
 		catch (Exception ex) {
 			if (logger.isDebugEnabled()) {
@@ -1419,7 +1419,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	protected View resolveViewName(String viewName, @Nullable Map<String, Object> model,
 			Locale locale, HttpServletRequest request) throws Exception {
 
-		if (this.viewResolvers != null) {
+		if (this.viewResolvers != null) { // 视图解析器不为空
+			// 遍历视图解析器获取视图
 			for (ViewResolver viewResolver : this.viewResolvers) {
 				View view = viewResolver.resolveViewName(viewName, locale);
 				if (view != null) {
